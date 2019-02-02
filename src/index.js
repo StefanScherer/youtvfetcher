@@ -3,7 +3,6 @@ import fs from 'fs';
 import './env';
 import YouTv from './YouTv';
 import getLoginData from './getLoginData';
-import notify from './notify';
 
 const downloadPath = process.argv[2] || '.';
 
@@ -13,16 +12,16 @@ const downloadPath = process.argv[2] || '.';
   await youtv.login(username, password);
   const recordings = await youtv.fetchRecordings();
   await Promise.all(recordings.filter(r => r.isRecorded()).map((recording) => {
-    const { id, title } = recording;
-    const path = `${downloadPath}/${id}_${title}.mp4`;
+    const { id, title, subtitle, start_date } = recording;
+    const path = `${downloadPath}/${start_date} ${title} - ${subtitle} ${id}.mp4`;
     if (fs.existsSync(path)) {
-      notify(`Already downloaded. Skipping ${title} (${id})`);
+      console.log(`Already downloaded. Skipping ${title} (${id})`);
       return null;
     }
-    notify(`Downloading ${title} (${id}) …`);
+    console.log(`Downloading ${title} (${id}) -> ${path} …`);
     return recording.download().then((stream) => {
       const endPromise = new Promise(resolve => stream.on('end', () => {
-        notify(`Finished downloading ${title} (${id})`);
+        console.log(`Finished downloading ${title} (${id})`);
         resolve();
       }));
       const dest = fs.createWriteStream(path);
@@ -30,5 +29,5 @@ const downloadPath = process.argv[2] || '.';
       return endPromise;
     });
   }));
-  notify('finished');
+  console.log('finished');
 })();
