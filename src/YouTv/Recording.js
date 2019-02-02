@@ -5,6 +5,8 @@ export default class Recording {
     this.data = data;
     this.id = data.id;
     this.title = data.title;
+    this.subtitle = data.subtitle;
+    this.start_date = data.starts_at.substring(0,data.starts_at.indexOf('T'));
     this.token = token;
   }
 
