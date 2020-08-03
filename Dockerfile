@@ -1,4 +1,4 @@
-FROM arm32v7/node:10-slim AS build
+FROM arm32v7/node:14-slim AS build
 
 WORKDIR /code
 
@@ -7,7 +7,7 @@ RUN npm install
 COPY src src
 RUN npm run build
 
-FROM arm32v7/node:10-slim
+FROM arm32v7/node:14-slim
 
 WORKDIR /code
 COPY --from=build /code/node_modules /code/node_modules
