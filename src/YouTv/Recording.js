@@ -14,8 +14,14 @@ export default class Recording {
     return this.data.recorded;
   }
 
-  async download(quality = 'hd') {
-    const { file } = this.data.files.filter(i => i.quality === quality)[0];
+  async download() {
+    let quality = 'hd';
+    let match = this.data.files.filter(i => i.quality === quality);
+    if (! match.length) {
+      quality = 'hq';
+      match = this.data.files.filter(i => i.quality === quality);
+    }
+    const { file } = match[0];
     return fetch(file, { token: this.token }).then(res => res.body);
   }
 }
